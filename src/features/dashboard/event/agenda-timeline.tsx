@@ -25,7 +25,7 @@ interface AgendaTimelineProps {
 	onReorder: (newAgenda: AgendaItem[]) => void
 	onVote: (itemId: string) => void
 	onAddItem: () => void
-	onUpdateItem: (itemId: string, updatedItem: AgendaItem) => void
+	onUpdateItem: (updatedItem: AgendaItem) => void
 	onDeleteItem: (itemId: string) => void
 }
 
@@ -60,7 +60,7 @@ export function AgendaTimeline({
 	}
 
 	const handleSaveItem = (updatedItem: AgendaItem) => {
-		onUpdateItem(updatedItem.id, updatedItem)
+		onUpdateItem(updatedItem)
 		setEditingItem(null)
 	}
 
