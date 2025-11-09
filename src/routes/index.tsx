@@ -14,7 +14,6 @@ import { motion, useScroll, useTransform } from 'motion/react'
 import { useRef } from 'react'
 
 import { AuthButton } from '@/components/AuthButton'
-import { LoadingSpinner } from '@/components/ui/loading-spinner'
 
 const phases = [
 	{
@@ -79,7 +78,6 @@ const features = [
 ]
 
 export const Route = createFileRoute('/')({
-	pendingComponent: () => <LoadingSpinner />,
 	component: Index,
 })
 

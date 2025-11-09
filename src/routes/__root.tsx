@@ -9,6 +9,7 @@ import { AnimatePresence } from 'motion/react'
 
 import { DefaultCatchBoundary } from '@/components/DefaultCatchBoundary'
 import { NotFound } from '@/components/NotFound'
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
 
 import { getUserId } from '@/lib/auth'
 import { seo } from '@/lib/seo'
@@ -26,6 +27,7 @@ export const Route = createRootRouteWithContext<{
 	queryClient: typeof queryClient
 	userId: string | null
 }>()({
+	pendingComponent: () => <LoadingSpinner />,
 	beforeLoad: async ({ context }) => {
 		const user = await context.queryClient.fetchQuery({
 			queryKey: ['getUserId'],
