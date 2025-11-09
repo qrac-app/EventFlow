@@ -1,11 +1,19 @@
 import { ConvexQueryClient } from '@convex-dev/react-query'
-import { ConvexProvider } from 'convex/react'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { ConvexProvider, ConvexReactClient } from 'convex/react'
 
 const CONVEX_URL = import.meta.env.VITE_CONVEX_URL as string
 if (!CONVEX_URL) {
 	console.error('missing envar CONVEX_URL')
 }
-const convexQueryClient = new ConvexQueryClient(CONVEX_URL)
+
+const convex = new ConvexReactClient(CONVEX_URL)
+const queryClient = new QueryClient()
+const convexQueryClient = new ConvexQueryClient(convex)
+
+export function getConvexContext() {
+	return { convexQueryClient, queryClient }
+}
 
 export default function AppConvexProvider({
 	children,
@@ -13,8 +21,10 @@ export default function AppConvexProvider({
 	children: React.ReactNode
 }) {
 	return (
-		<ConvexProvider client={convexQueryClient.convexClient}>
-			{children}
-		</ConvexProvider>
+		<QueryClientProvider client={queryClient}>
+			<ConvexProvider client={convexQueryClient.convexClient}>
+				{children}
+			</ConvexProvider>
+		</QueryClientProvider>
 	)
 }

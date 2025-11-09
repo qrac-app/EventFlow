@@ -1,14 +1,29 @@
 import { TanStackDevtools } from '@tanstack/react-devtools'
-import { createRootRoute, HeadContent, Scripts } from '@tanstack/react-router'
+import {
+	createRootRouteWithContext,
+	HeadContent,
+	Scripts,
+} from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { AnimatePresence } from 'motion/react'
 
-import ClerkProvider from '../integrations/clerk/provider'
-import ConvexProvider from '../integrations/convex/provider'
+import { DefaultCatchBoundary } from '@/components/DefaultCatchBoundary'
+import { NotFound } from '@/components/NotFound'
 
+import { seo } from '@/lib/seo'
+
+import ClerkProvider from '../integrations/clerk/provider'
+import ConvexProvider, {
+	getConvexContext,
+} from '../integrations/convex/provider'
 import appCss from '../styles.css?url'
 
-export const Route = createRootRoute({
+const { convexQueryClient, queryClient } = getConvexContext()
+
+export const Route = createRootRouteWithContext<{
+	convexQueryClient: typeof convexQueryClient
+	queryClient: typeof queryClient
+}>()({
 	head: () => ({
 		meta: [
 			{
@@ -18,9 +33,11 @@ export const Route = createRootRoute({
 				name: 'viewport',
 				content: 'width=device-width, initial-scale=1',
 			},
-			{
+			...seo({
 				title: 'EventFlow - AI-Assisted Event Planner',
-			},
+				description:
+					'Plan and manage events effortlessly with EventFlow, your AI-powered event planning assistant.',
+			}),
 		],
 		links: [
 			{
@@ -30,6 +47,15 @@ export const Route = createRootRoute({
 		],
 	}),
 
+	errorComponent: (props) => {
+		return (
+			<RootDocument>
+				<DefaultCatchBoundary {...props} />
+			</RootDocument>
+		)
+	},
+
+	notFoundComponent: () => <NotFound />,
 	shellComponent: RootDocument,
 })
 
