@@ -3,11 +3,9 @@ import { motion } from 'motion/react'
 
 import { ThemeButton } from '@/components/theme'
 
-export function DashboardHeader({
-	onCreateEvent,
-}: {
-	onCreateEvent: () => void
-}) {
+import { toggleCreateEventModal } from '@/stores/create-event-modal'
+
+export function DashboardHeader() {
 	return (
 		<div className="relative py-12 mb-8">
 			{/* Background gradient */}
@@ -38,7 +36,7 @@ export function DashboardHeader({
 						<motion.button
 							whileHover={{ scale: 1.05 }}
 							whileTap={{ scale: 0.95 }}
-							onClick={onCreateEvent}
+							onClick={toggleCreateEventModal}
 							className="relative px-6 py-3 bg-primary text-primary-foreground rounded overflow-hidden group"
 						>
 							<span className="relative z-10 flex items-center gap-2">
