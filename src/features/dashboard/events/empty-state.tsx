@@ -47,7 +47,7 @@ export function EmptyState({ filter }: EmptyStateProps) {
 				<motion.button
 					whileHover={{ scale: 1.05 }}
 					whileTap={{ scale: 0.95 }}
-					onClick={toggleEventFormModal}
+					onClick={() => toggleEventFormModal()}
 					className="px-6 py-3 bg-primary text-primary-foreground rounded flex items-center gap-2"
 				>
 					<Plus className="w-5 h-5" />

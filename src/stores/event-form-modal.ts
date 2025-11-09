@@ -13,12 +13,5 @@ export const eventFormModalStore = atom<{
 export const toggleEventFormModal = (event: Event | null = null) => {
 	const currentState = eventFormModalStore.get().isOpen
 
-	console.log(
-		'Toggling event form modal. Current state:',
-		currentState,
-		'Event:',
-		event,
-	)
-
 	eventFormModalStore.set({ isOpen: !currentState, event })
 }
