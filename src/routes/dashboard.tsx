@@ -1,3 +1,4 @@
+import { UserButton } from '@clerk/clerk-react'
 import { createFileRoute, Link, Outlet } from '@tanstack/react-router'
 import { Sparkles } from 'lucide-react'
 import { motion } from 'motion/react'
@@ -45,6 +46,8 @@ const Nav = () => {
 							</div>
 						</Link>
 					</motion.button>
+
+					<UserButton />
 				</div>
 			</div>
 		</motion.nav>
