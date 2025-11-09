@@ -1,15 +1,18 @@
 import { convexQuery } from '@convex-dev/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useMutation, useQuery } from 'convex/react'
+import { useConvexAuth, useMutation, useQuery } from 'convex/react'
 import { motion } from 'motion/react'
+import { Activity } from 'react'
 
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
+
 import { AIDrawer } from '@/features/ai/drawer'
 import { ActiveUsers } from '@/features/dashboard/event/active-users'
 import { AddParticipantModal } from '@/features/dashboard/event/add-participant-modal'
 import { AgendaTimeline } from '@/features/dashboard/event/agenda-timeline'
 import { AddItemModal } from '@/features/dashboard/event/agenda/add-item-modal'
 import { EventHeader } from '@/features/dashboard/event/header'
+import { ParticipantsList } from '@/features/dashboard/event/participants-list'
 
 import { toggleAgendaItem } from '@/stores/agenda-item'
 
@@ -56,17 +59,22 @@ export const Route = createFileRoute('/dashboard/events/$eventId')({
 
 function RouteComponent() {
 	const { eventId } = Route.useParams()
+	const { isAuthenticated } = useConvexAuth()
 
 	const currentEvent = useQuery(api.events.getEvent, {
 		eventId: eventId as Id<'events'>,
 	})
+	const participant = useQuery(
+		api.participants.getCurrentUserAsParticipant,
+		isAuthenticated ? { eventId: eventId as Id<'events'> } : 'skip',
+	)
 	const activeUsers: ActiveUser[] = []
 
-	const reorderAgendaItems = useMutation(api.events.reorderAgendaItems)
-	const voteOnAgendaItem = useMutation(api.events.voteOnAgendaItem)
-	const createAgendaItem = useMutation(api.events.createAgendaItem)
-	const updateAgendaItem = useMutation(api.events.updateAgendaItem)
-	const deleteAgendaItem = useMutation(api.events.deleteAgendaItem)
+	const reorderAgendaItems = useMutation(api.agendas.reorderAgendaItems)
+	const voteOnAgendaItem = useMutation(api.agendas.voteOnAgendaItem)
+	const createAgendaItem = useMutation(api.agendas.createAgendaItem)
+	const updateAgendaItem = useMutation(api.agendas.updateAgendaItem)
+	const deleteAgendaItem = useMutation(api.agendas.deleteAgendaItem)
 
 	if (currentEvent === undefined) {
 		return <LoadingSpinner />
@@ -145,6 +153,16 @@ function RouteComponent() {
 					onUpdateItem={handleUpdateAgendaItem}
 					onDeleteItem={handleDeleteAgendaItem}
 				/>
+
+				<Activity
+					mode={
+						['editor', 'owner'].includes(participant?.role || '')
+							? 'visible'
+							: 'hidden'
+					}
+				>
+					<ParticipantsList eventId={eventId as Id<'events'>} />
+				</Activity>
 			</div>
 
 			<AIDrawer onGenerate={handleGenerateAgenda} />
