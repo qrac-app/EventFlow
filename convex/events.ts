@@ -130,7 +130,7 @@ export const getEvents = query({
       }),
     )
 
-    return eventsWithDetails.filter(Boolean)
+    return eventsWithDetails.filter((e) => e !== null).filter(Boolean)
   },
 })
 
