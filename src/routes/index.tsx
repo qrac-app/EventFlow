@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import {
 	ArrowRight,
 	BarChart3,
@@ -12,6 +12,8 @@ import {
 } from 'lucide-react'
 import { motion, useScroll, useTransform } from 'motion/react'
 import { useRef } from 'react'
+
+import { AuthButton } from '@/components/AuthButton'
 
 const phases = [
 	{
@@ -166,13 +168,11 @@ function Index() {
 							transition={{ duration: 0.8, delay: 0.3 }}
 							className="group relative px-8 py-4 bg-primary text-primary-foreground rounded overflow-hidden transition-all hover:scale-105 hover:shadow-xl"
 						>
-							<Link
-								to="/dashboard"
+							<AuthButton
+								text="Get Started"
+								icon={ArrowRight}
 								className="relative z-10 flex items-center gap-2"
-							>
-								Get Started
-								<ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
-							</Link>
+							/>
 							<motion.div
 								className="absolute inset-0 bg-linear-to-r from-primary to-secondary"
 								initial={{ x: '100%' }}
@@ -404,7 +404,7 @@ function Index() {
 							whileTap={{ scale: 0.95 }}
 							className="px-8 py-4 bg-primary text-primary-foreground rounded shadow-lg hover:shadow-xl transition-shadow"
 						>
-							<Link to="/dashboard">Get Started Now</Link>
+							<AuthButton text="Get Started Now" />
 						</motion.button>
 					</div>
 				</motion.section>
