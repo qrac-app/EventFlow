@@ -6,12 +6,14 @@ import {
 	Share2,
 	Sparkles,
 	Users,
+	UserPlus,
 } from 'lucide-react'
 import { motion } from 'motion/react'
 
 import { formatDate, formatTime } from '@/lib/utils'
 
 import { toggleAIDrawer } from '@/stores/ai-drawer'
+import { toggleAddParticipantModal } from '@/stores/add-participant-modal'
 
 import type { Event } from '@/types'
 
@@ -118,6 +120,16 @@ export function EventHeader({ event }: EventHeaderProps) {
 						>
 							<Share2 className="w-4 h-4" />
 							Share
+						</motion.button>
+
+						<motion.button
+							whileHover={{ scale: 1.05 }}
+							whileTap={{ scale: 0.95 }}
+							onClick={toggleAddParticipantModal}
+							className="px-6 py-3 bg-card border border-border rounded hover:border-primary transition-colors flex items-center gap-2"
+						>
+							<UserPlus className="w-4 h-4" />
+							Add Participant
 						</motion.button>
 
 						<motion.button

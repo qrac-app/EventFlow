@@ -472,3 +472,60 @@ export const voteOnAgendaItem = mutation({
     }
   },
 })
+
+export const addParticipant = mutation({
+  args: {
+    eventId: v.id('events'),
+    participantId: v.id('users'),
+    role: v.union(v.literal('editor'), v.literal('viewer')),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity()
+    if (!identity) {
+      throw new Error('Not authenticated')
+    }
+
+    const user = await ctx.db
+      .query('users')
+      .withIndex('by_clerk_id', (q) => q.eq('clerkId', identity.subject))
+      .unique()
+
+    if (!user) {
+      throw new Error('User not found')
+    }
+
+    const event = await ctx.db.get(args.eventId)
+    if (!event) {
+      throw new Error('Event not found')
+    }
+
+    const participant = await ctx.db
+      .query('participants')
+      .withIndex('by_user_and_event', (q) =>
+        q.eq('userId', user._id).eq('eventId', args.eventId),
+      )
+      .unique()
+
+    if (!participant || (participant.role !== 'owner' && participant.role !== 'editor')) {
+      throw new Error('Not authorized to add participants to this event')
+    }
+
+    const existingParticipant = await ctx.db
+      .query('participants')
+      .withIndex('by_user_and_event', (q) =>
+        q.eq('userId', args.participantId).eq('eventId', args.eventId),
+      )
+      .unique()
+
+    if (existingParticipant) {
+      // User is already a participant
+      return
+    }
+
+    await ctx.db.insert('participants', {
+      userId: args.participantId,
+      eventId: args.eventId,
+      role: args.role,
+    })
+  },
+})

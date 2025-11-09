@@ -6,6 +6,7 @@ import { motion } from 'motion/react'
 import { LoadingSpinner } from '@/components/ui/loading-spinner'
 import { AIDrawer } from '@/features/ai/drawer'
 import { ActiveUsers } from '@/features/dashboard/event/active-users'
+import { AddParticipantModal } from '@/features/dashboard/event/add-participant-modal'
 import { AgendaTimeline } from '@/features/dashboard/event/agenda-timeline'
 import { AddItemModal } from '@/features/dashboard/event/agenda/add-item-modal'
 import { EventHeader } from '@/features/dashboard/event/header'
@@ -148,6 +149,7 @@ function RouteComponent() {
 
 			<AIDrawer onGenerate={handleGenerateAgenda} />
 			<AddItemModal onSave={handleSaveNewAgendaItem} />
+			<AddParticipantModal eventId={eventId as Id<'events'>} />
 		</motion.div>
 	)
 }
