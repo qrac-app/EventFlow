@@ -3,7 +3,10 @@ import { Sparkles } from 'lucide-react'
 import { motion } from 'motion/react'
 import React from 'react'
 
+import { LoadingSpinner } from '@/components/ui/loading-spinner'
+
 export const Route = createFileRoute('/dashboard')({
+	pendingComponent: () => <LoadingSpinner />,
 	component: DashboardLayout,
 })
 
