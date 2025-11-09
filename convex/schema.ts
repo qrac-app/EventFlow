@@ -46,6 +46,7 @@ export default defineSchema({
     title: v.string(),
     duration: v.number(),
     startTime: v.string(),
+    endTime: v.optional(v.string()),
     description: v.optional(v.string()),
     votes: v.number(),
     type: v.union(
