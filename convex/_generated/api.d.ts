@@ -8,8 +8,10 @@
  * @module
  */
 
+import type * as agendas from "../agendas.js";
 import type * as events from "../events.js";
 import type * as http from "../http.js";
+import type * as participants from "../participants.js";
 import type * as users from "../users.js";
 import type * as webhooks from "../webhooks.js";
 
@@ -28,8 +30,10 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  agendas: typeof agendas;
   events: typeof events;
   http: typeof http;
+  participants: typeof participants;
   users: typeof users;
   webhooks: typeof webhooks;
 }>;
