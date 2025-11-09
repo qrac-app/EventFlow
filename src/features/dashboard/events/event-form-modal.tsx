@@ -2,7 +2,7 @@ import { useStore } from '@nanostores/react'
 import { useMutation } from 'convex/react'
 import { Calendar, Clock, Sparkles, Users, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
-import { Activity, useState } from 'react'
+import { Activity, useEffect, useState } from 'react'
 
 import {
 	eventFormModalStore,
@@ -23,9 +23,10 @@ export interface EventFormData {
 }
 
 export function EventFormModal() {
-	const { isOpen } = useStore(eventFormModalStore)
+	const { isOpen, event: eventToEdit } = useStore(eventFormModalStore)
 
 	const createEvent = useMutation(api.events.createEvent)
+	const updateEvent = useMutation(api.events.updateEvent)
 
 	const [formData, setFormData] = useState<EventFormData>({
 		title: '',
@@ -38,20 +39,64 @@ export function EventFormModal() {
 		isPublic: true,
 	})
 
+	useEffect(() => {
+		if (eventToEdit) {
+			// Format the date for datetime-local input
+			const formattedDate = eventToEdit.date.substring(0, 16)
+
+			setFormData({
+				title: eventToEdit.title,
+				date: formattedDate,
+				duration: eventToEdit.duration,
+				status: eventToEdit.status,
+				expectedParticipants: eventToEdit.expectedParticipants,
+				tone: eventToEdit.tone,
+				goals: eventToEdit.goals || '',
+				isPublic: eventToEdit.isPublic,
+			})
+		} else {
+			setFormData({
+				title: '',
+				date: '',
+				duration: 2,
+				status: 'draft',
+				expectedParticipants: 10,
+				tone: 'formal',
+				goals: '',
+				isPublic: true,
+			})
+		}
+	}, [eventToEdit])
+
 	const [step, setStep] = useState(1)
 
 	const handleSubmit = () => {
-		createEvent({
-			title: formData.title,
-			date: new Date(formData.date).toISOString(),
-			duration: formData.duration,
-			expectedParticipants: formData.expectedParticipants,
-			tone: formData.tone,
-			goals: formData.goals,
-			status: formData.status,
-			// isPublic: formData.isPublic,
-			isPublic: true, // feature will be implemented later
-		})
+		if (eventToEdit) {
+			updateEvent({
+				eventId: eventToEdit.id,
+				title: formData.title,
+				date: new Date(formData.date).toISOString(),
+				duration: formData.duration,
+				expectedParticipants: formData.expectedParticipants,
+				tone: formData.tone,
+				goals: formData.goals,
+				status: formData.status,
+				// isPublic: formData.isPublic,
+				isPublic: true, // feature will be implemented later
+			})
+		} else {
+			createEvent({
+				title: formData.title,
+				date: new Date(formData.date).toISOString(),
+				duration: formData.duration,
+				expectedParticipants: formData.expectedParticipants,
+				tone: formData.tone,
+				goals: formData.goals,
+				status: formData.status,
+				// isPublic: formData.isPublic,
+				isPublic: true, // feature will be implemented later
+			})
+		}
 
 		// Reset form
 		setFormData({
@@ -72,6 +117,9 @@ export function EventFormModal() {
 	const onClose = () => {
 		toggleEventFormModal()
 	}
+
+	const modalTitle = eventToEdit ? 'Edit Event' : 'Create New Event'
+	const submitButtonText = eventToEdit ? 'Save Changes' : 'Create Event'
 
 	return (
 		<AnimatePresence>
@@ -111,7 +159,7 @@ export function EventFormModal() {
 									<Sparkles className="w-5 h-5 text-primary-foreground" />
 								</div>
 								<div>
-									<h2>Create New Event</h2>
+									<h2>{modalTitle}</h2>
 									<p className="text-sm text-muted-foreground">
 										Step {step} of 2
 									</p>
@@ -428,7 +476,7 @@ export function EventFormModal() {
 							disabled={step === 1 && !formData.title}
 							className="px-6 py-3 bg-primary text-primary-foreground rounded disabled:opacity-50 disabled:cursor-not-allowed"
 						>
-							{step === 1 ? 'Next' : 'Create Event'}
+							{step === 1 ? 'Next' : submitButtonText}
 						</motion.button>
 					</div>
 				</motion.div>

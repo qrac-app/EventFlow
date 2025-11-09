@@ -7,21 +7,25 @@ import {
 	Sparkles,
 	Users,
 	UserPlus,
+	Edit,
 } from 'lucide-react'
+import { Activity } from 'react'
 import { motion } from 'motion/react'
 
 import { formatDate, formatTime } from '@/lib/utils'
 
 import { toggleAIDrawer } from '@/stores/ai-drawer'
 import { toggleAddParticipantModal } from '@/stores/add-participant-modal'
+import { toggleEventFormModal } from '@/stores/event-form-modal'
 
 import type { Event } from '@/types'
 
 interface EventHeaderProps {
 	event: Event
+	canEdit: boolean
 }
 
-export function EventHeader({ event }: EventHeaderProps) {
+export function EventHeader({ event, canEdit }: EventHeaderProps) {
 	return (
 		<div className="relative py-8 mb-8 border-b border-border">
 			{/* Background effects */}
@@ -113,6 +117,18 @@ export function EventHeader({ event }: EventHeaderProps) {
 						transition={{ duration: 0.6, delay: 0.1 }}
 						className="flex gap-3"
 					>
+						<Activity mode={canEdit ? 'visible' : 'hidden'}>
+							<motion.button
+								whileHover={{ scale: 1.05 }}
+								whileTap={{ scale: 0.95 }}
+								onClick={() => toggleEventFormModal(event)}
+								className="px-6 py-3 bg-card border border-border rounded hover:border-primary transition-colors flex items-center gap-2"
+							>
+								<Edit className="w-4 h-4" />
+								Edit Event
+							</motion.button>
+						</Activity>
+
 						<motion.button
 							whileHover={{ scale: 1.05 }}
 							whileTap={{ scale: 0.95 }}

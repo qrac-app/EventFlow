@@ -20,6 +20,7 @@ import type { AgendaItem } from '@/types'
 
 import { api } from '~/convex/_generated/api'
 import type { Id } from '~/convex/_generated/dataModel'
+import { EventFormModal } from '@/features/dashboard/events/event-form-modal'
 
 interface ActiveUser {
 	id: string
@@ -137,7 +138,10 @@ function RouteComponent() {
 			transition={{ duration: 0.5 }}
 			className="pt-20"
 		>
-			<EventHeader event={currentEvent} />
+			<EventHeader
+				event={currentEvent}
+				canEdit={participant?.role === 'owner'}
+			/>
 
 			<div className="max-w-7xl mx-auto px-6 pb-20">
 				{activeUsers.length > 0 && (
@@ -168,6 +172,7 @@ function RouteComponent() {
 			<AIDrawer onGenerate={handleGenerateAgenda} />
 			<AddItemModal onSave={handleSaveNewAgendaItem} />
 			<AddParticipantModal eventId={eventId as Id<'events'>} />
+			<EventFormModal />
 		</motion.div>
 	)
 }

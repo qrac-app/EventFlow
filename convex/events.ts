@@ -212,19 +212,18 @@ export const getEvent = query({
 export const updateEvent = mutation({
   args: {
     eventId: v.id('events'),
-    title: v.optional(v.string()),
-    description: v.optional(v.string()),
-    date: v.optional(v.string()),
-    duration: v.optional(v.number()),
-    status: v.optional(
-      v.union(
-        v.literal('upcoming'),
-        v.literal('draft'),
-        v.literal('completed'),
-      ),
+    title: v.string(),
+    date: v.string(),
+    duration: v.number(),
+    status: v.union(
+      v.literal('upcoming'),
+      v.literal('draft'),
+      v.literal('completed'),
     ),
-    tone: v.optional(v.union(v.literal('formal'), v.literal('casual'))),
-    isPublic: v.optional(v.boolean()),
+    expectedParticipants: v.number(),
+    goals: v.optional(v.string()),
+    tone: v.union(v.literal('formal'), v.literal('casual')),
+    isPublic: v.boolean(),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity()
