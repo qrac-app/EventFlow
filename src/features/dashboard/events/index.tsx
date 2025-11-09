@@ -2,7 +2,7 @@ import { BarChart3, LayoutGrid, List } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 
-import type { Event } from '@/lib/mock-data'
+import type { Event } from '@/types'
 
 import { EventGridView } from './grid-view'
 import { EventListView } from './list-view'

@@ -2,7 +2,7 @@ import { ArrowUpDown, Clock, Edit, ThumbsUp, Trash2 } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 
-import type { AgendaItem } from '@/lib/mock-data'
+import type { AgendaItem } from '@/types'
 
 interface AgendaTableViewProps {
 	agenda: AgendaItem[]

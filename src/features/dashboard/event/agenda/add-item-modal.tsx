@@ -3,11 +3,12 @@ import { Calendar, Clock, Sparkles, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { Activity, useState } from 'react'
 
-import type { AgendaItem } from '@/lib/mock-data'
 import { agendaItemStore, toggleAgendaItem } from '@/stores/agenda-item'
 
+import type { AgendaItem } from '@/types'
+
 interface AddItemModalProps {
-	onSave: (item: Omit<AgendaItem, 'id' | 'votes' | 'votedBy'>) => void
+	onSave: (item: Omit<Partial<AgendaItem>, 'id' | 'votes' | 'votedBy'>) => void
 }
 
 export function AddItemModal({ onSave }: AddItemModalProps) {

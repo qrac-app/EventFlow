@@ -3,8 +3,9 @@ import { Calendar, ChevronRight, Clock, Users } from 'lucide-react'
 import { motion } from 'motion/react'
 import { useState } from 'react'
 
-import type { Event } from '@/lib/mock-data'
 import { formatDate, getDaysUntil } from '@/lib/utils'
+
+import type { Event } from '@/types'
 
 interface EventTimelineProps {
 	events: Event[]

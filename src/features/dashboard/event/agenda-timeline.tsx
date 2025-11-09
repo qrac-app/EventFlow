@@ -12,7 +12,7 @@ import {
 import { motion, Reorder } from 'motion/react'
 import { useState } from 'react'
 
-import type { AgendaItem } from '@/lib/mock-data'
+import type { AgendaItem } from '@/types'
 
 import { AgendaCalendarView } from './agenda/calendar-view'
 import { AgendaGanttView } from './agenda/gantt-view'

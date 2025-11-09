@@ -1,7 +1,7 @@
 import { Clock, Edit, ThumbsUp } from 'lucide-react'
 import { motion } from 'motion/react'
 
-import type { AgendaItem } from '@/lib/mock-data'
+import type { AgendaItem } from '@/types'
 
 interface AgendaKanbanViewProps {
 	agenda: AgendaItem[]

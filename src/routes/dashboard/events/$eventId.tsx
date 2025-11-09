@@ -10,8 +10,9 @@ import { AgendaTimeline } from '@/features/dashboard/event/agenda-timeline'
 import { AddItemModal } from '@/features/dashboard/event/agenda/add-item-modal'
 import { EventHeader } from '@/features/dashboard/event/header'
 
-import type { AgendaItem } from '@/lib/mock-data'
 import { toggleAgendaItem } from '@/stores/agenda-item'
+
+import type { AgendaItem } from '@/types'
 
 import { api } from '~/convex/_generated/api'
 import type { Id } from '~/convex/_generated/dataModel'
@@ -85,9 +86,17 @@ function RouteComponent() {
 	}
 
 	const handleSaveNewAgendaItem = async (
-		item: Omit<AgendaItem, 'id' | 'votes' | 'votedBy'>,
+		item: Omit<Partial<AgendaItem>, 'id' | 'votes' | 'votedBy'>,
 	) => {
-		await createAgendaItem({ eventId: currentEvent.id, ...item })
+		await createAgendaItem({
+			eventId: currentEvent.id,
+			title: item.title || '',
+			duration: item.duration || 0,
+			startTime: item.startTime || '',
+			endTime: item.endTime || '',
+			description: item.description || '',
+			type: item.type || 'activity',
+		})
 	}
 
 	const handleUpdateAgendaItem = async (item: AgendaItem) => {

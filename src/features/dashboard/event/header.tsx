@@ -9,10 +9,11 @@ import {
 } from 'lucide-react'
 import { motion } from 'motion/react'
 
-import type { Event } from '@/lib/mock-data'
 import { formatDate, formatTime } from '@/lib/utils'
 
 import { toggleAIDrawer } from '@/stores/ai-drawer'
+
+import type { Event } from '@/types'
 
 interface EventHeaderProps {
 	event: Event

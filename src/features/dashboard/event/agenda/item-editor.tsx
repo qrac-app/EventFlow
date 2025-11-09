@@ -2,7 +2,7 @@ import { Save, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useState } from 'react'
 
-import type { AgendaItem } from '@/lib/mock-data'
+import type { AgendaItem } from '@/types'
 
 interface AgendaItemEditorProps {
 	item: AgendaItem
