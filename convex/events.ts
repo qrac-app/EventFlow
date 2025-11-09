@@ -4,7 +4,6 @@ import { mutation, query } from './_generated/server'
 export const createEvent = mutation({
   args: {
     title: v.string(),
-    description: v.string(),
     date: v.string(),
     duration: v.number(),
     status: v.union(
@@ -12,6 +11,8 @@ export const createEvent = mutation({
       v.literal('draft'),
       v.literal('completed'),
     ),
+    expectedParticipants: v.number(),
+    goals: v.optional(v.string()),
     tone: v.union(v.literal('formal'), v.literal('casual')),
     isPublic: v.boolean(),
   },
@@ -36,11 +37,12 @@ export const createEvent = mutation({
 
     const eventId = await ctx.db.insert('events', {
       title: args.title,
-      description: args.description,
       date: args.date,
       duration: args.duration,
+      expectedParticipants: args.expectedParticipants,
       status: args.status,
       tone: args.tone,
+      goals: args.goals,
       createdAt: now,
       ownerId: user._id,
       isPublic: args.isPublic,

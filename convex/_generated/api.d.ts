@@ -9,7 +9,9 @@
  */
 
 import type * as events from "../events.js";
+import type * as http from "../http.js";
 import type * as users from "../users.js";
+import type * as webhooks from "../webhooks.js";
 
 import type {
   ApiFromModules,
@@ -27,7 +29,9 @@ import type {
  */
 declare const fullApi: ApiFromModules<{
   events: typeof events;
+  http: typeof http;
   users: typeof users;
+  webhooks: typeof webhooks;
 }>;
 declare const fullApiWithMounts: typeof fullApi;
 

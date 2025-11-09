@@ -13,7 +13,6 @@ export default defineSchema({
 
   events: defineTable({
     title: v.string(),
-    description: v.string(),
     date: v.string(),
     duration: v.number(),
     status: v.union(
@@ -21,7 +20,9 @@ export default defineSchema({
       v.literal('draft'),
       v.literal('completed'),
     ),
+    expectedParticipants: v.number(),
     tone: v.union(v.literal('formal'), v.literal('casual')),
+    goals: v.optional(v.string()),
     createdAt: v.string(),
     ownerId: v.id('users'),
     isPublic: v.boolean(),
