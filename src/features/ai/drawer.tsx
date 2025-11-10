@@ -1,62 +1,49 @@
 import { useStore } from '@nanostores/react'
+import { useMutation, useQuery } from 'convex/react'
 import { Loader2, Send, Sparkles, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
-import { Activity, useState } from 'react'
+import { Activity, useEffect, useEffectEvent, useRef, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
 
 import { aiDrawerStore, toggleAIDrawer } from '@/stores/ai-drawer'
 
-interface AIDrawerProps {
-	onGenerate: (prompt: string) => void
-}
+import { api } from '~/convex/_generated/api'
+import type { Id } from '~/convex/_generated/dataModel'
 
-interface Message {
-	id: string
-	role: 'user' | 'assistant'
-	content: string
-	timestamp: Date
-}
-
-export function AIDrawer({ onGenerate }: AIDrawerProps) {
+export function AIDrawer({ eventId }: { eventId: Id<'events'> }) {
 	const { isOpen } = useStore(aiDrawerStore)
-
-	const [messages, setMessages] = useState<Message[]>([
-		{
-			id: '1',
-			role: 'assistant',
-			content:
-				'Hi! I can help you create or modify your event agenda. Try asking me to:\n\n• Generate a 2-hour design sprint\n• Add a networking break\n• Suggest icebreaker activities\n• Rebalance the timing',
-			timestamp: new Date(),
-		},
-	])
 	const [input, setInput] = useState('')
-	const [isGenerating, setIsGenerating] = useState(false)
+
+	const messages = useQuery(api.ai.getMessages, {
+		eventId: eventId as Id<'events'>,
+	})
+	const user = useQuery(api.users.getCurrentUser)
+	const sendMessage = useMutation(api.ai.sendMessage)
+
+	const isGenerating = messages === undefined
+
+	const messagesEndRef = useRef<HTMLDivElement>(null)
+
+	const scrollToBottom = useEffectEvent(() => {
+		messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+	})
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: <FEEDBACK>missing dependeny 'scrollToBottom'</FEEDBACK>
+	useEffect(() => {
+		scrollToBottom()
+	}, [messages])
 
 	const handleSend = async () => {
 		if (!input.trim() || isGenerating) return
 
-		const userMessage: Message = {
-			id: Date.now().toString(),
-			role: 'user',
-			content: input,
-			timestamp: new Date(),
-		}
-
-		setMessages((prev) => [...prev, userMessage])
+		const messageContent = input
 		setInput('')
-		setIsGenerating(true)
 
-		// Simulate AI response
-		setTimeout(() => {
-			const aiMessage: Message = {
-				id: (Date.now() + 1).toString(),
-				role: 'assistant',
-				content: `I'll help you with that! Generating agenda items based on: "${input}"\n\nI've added new items to your timeline. You can drag to reorder them or click to edit details.`,
-				timestamp: new Date(),
-			}
-			setMessages((prev) => [...prev, aiMessage])
-			setIsGenerating(false)
-			onGenerate(input)
-		}, 2000)
+		await sendMessage({
+			eventId: eventId as Id<'events'>,
+			content: messageContent,
+			role: 'user',
+		})
 	}
 
 	const quickPrompts = [
@@ -84,7 +71,7 @@ export function AIDrawer({ onGenerate }: AIDrawerProps) {
 					animate={{ x: 0 }}
 					exit={{ x: '100%' }}
 					transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-					className="fixed top-0 right-0 bottom-0 w-full md:w-[500px] bg-card border-l border-border z-50 flex flex-col"
+					className="fixed top-0 right-0 bottom-0 w-full md:w-[800px] bg-card border-l border-border z-50 flex flex-col"
 				>
 					{/* Header */}
 					<div className="flex items-center justify-between p-6 border-b border-border">
@@ -112,16 +99,21 @@ export function AIDrawer({ onGenerate }: AIDrawerProps) {
 					{/* Messages */}
 					<div className="flex-1 overflow-y-auto p-6 space-y-4">
 						<AnimatePresence initial={false}>
-							{messages.map((message) => (
+							{messages?.map((message) => (
 								<motion.div
-									key={message.id}
+									key={message._id}
 									initial={{ opacity: 0, y: 20 }}
 									animate={{ opacity: 1, y: 0 }}
 									exit={{ opacity: 0, y: -20 }}
-									className={`flex ${
+									className={`flex gap-3 ${
 										message.role === 'user' ? 'justify-end' : 'justify-start'
 									}`}
 								>
+									{message.role === 'assistant' && (
+										<div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+											<Sparkles className="w-4 h-4 text-primary-foreground" />
+										</div>
+									)}
 									<div
 										className={`max-w-[80%] rounded p-4 ${
 											message.role === 'user'
@@ -129,17 +121,33 @@ export function AIDrawer({ onGenerate }: AIDrawerProps) {
 												: 'bg-accent text-accent-foreground'
 										}`}
 									>
-										<p className="whitespace-pre-line">{message.content}</p>
+										{message.role === 'user' && message.user?.name && (
+											<p className="text-xs font-bold mb-1">
+												{message.user.name}
+											</p>
+										)}
+										<div className="prose prose-sm max-w-none">
+											<ReactMarkdown>{message.content}</ReactMarkdown>
+										</div>
 										<span className="text-xs opacity-70 mt-2 block">
-											{message.timestamp.toLocaleTimeString([], {
+											{new Date(message._creationTime).toLocaleTimeString([], {
 												hour: '2-digit',
 												minute: '2-digit',
 											})}
 										</span>
 									</div>
+
+									{message.role === 'user' && user?.avatar && (
+										<img
+											src={user.avatar}
+											alt={user.name}
+											className="w-8 h-8 rounded-full"
+										/>
+									)}
 								</motion.div>
 							))}
 						</AnimatePresence>
+						<div ref={messagesEndRef} />
 
 						{/* Loading indicator */}
 						{isGenerating && (

@@ -70,8 +70,8 @@ export const getCurrentUser = query({
     return null
   }
 
-
-    const user = await ctx.db.query('users')
+    const user = await ctx.db
+      .query('users')
       .withIndex('by_clerk_id', (q) => q.eq('clerkId', clerkUser.subject))
       .unique()
 

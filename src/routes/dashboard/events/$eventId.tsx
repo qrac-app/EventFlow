@@ -13,14 +13,11 @@ import { AgendaTimeline } from '@/features/dashboard/event/agenda-timeline'
 import { AddItemModal } from '@/features/dashboard/event/agenda/add-item-modal'
 import { EventHeader } from '@/features/dashboard/event/header'
 import { ParticipantsList } from '@/features/dashboard/event/participants-list'
-
+import { EventFormModal } from '@/features/dashboard/events/event-form-modal'
 import { toggleAgendaItem } from '@/stores/agenda-item'
-
 import type { AgendaItem } from '@/types'
-
 import { api } from '~/convex/_generated/api'
 import type { Id } from '~/convex/_generated/dataModel'
-import { EventFormModal } from '@/features/dashboard/events/event-form-modal'
 
 interface ActiveUser {
 	id: string
@@ -125,10 +122,6 @@ function RouteComponent() {
 		await deleteAgendaItem({ agendaItemId: id as Id<'agendaItems'> })
 	}
 
-	const handleGenerateAgenda = async (prompt: string) => {
-		console.log('Generate agenda with prompt:', prompt)
-	}
-
 	return (
 		<motion.div
 			key="event"
@@ -169,7 +162,7 @@ function RouteComponent() {
 				</Activity>
 			</div>
 
-			<AIDrawer onGenerate={handleGenerateAgenda} />
+			<AIDrawer eventId={eventId as Id<'events'>} />
 			<AddItemModal onSave={handleSaveNewAgendaItem} />
 			<AddParticipantModal eventId={eventId as Id<'events'>} />
 			<EventFormModal />
