@@ -1,6 +1,7 @@
 import { Users } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
-import { Id } from '~/convex/_generated/dataModel'
+
+import type { Id } from '~/convex/_generated/dataModel'
 
 interface ActiveUser {
 	id: Id<'users'>
