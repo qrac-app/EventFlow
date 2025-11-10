@@ -23,7 +23,7 @@ export function AddParticipantModal({ eventId }: AddParticipantModalProps) {
 	const [email, setEmail] = useState('')
 	const [role, setRole] = useState<'editor' | 'viewer'>('viewer')
 
-	const addParticipant = useMutation(api.events.addParticipant)
+	const addParticipant = useMutation(api.participants.addParticipant)
 	const user = useQuery(api.users.findUserByEmail, { email })
 
 	const handleSubmit = async () => {
