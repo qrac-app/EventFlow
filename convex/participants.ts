@@ -123,6 +123,51 @@ export const removeParticipant = mutation({
   },
 })
 
+export const updatePresence = mutation({
+  args: {
+    eventId: v.id('events'),
+    userId: v.id('users'),
+  },
+  handler: async (ctx, args) => {
+    const participant = await ctx.db
+      .query('participants')
+      .withIndex('by_user_and_event', (q) =>
+        q.eq('userId', args.userId).eq('eventId', args.eventId),
+      )
+      .unique()
+
+    if (participant) {
+      await ctx.db.patch(participant._id, { lastSeen: Date.now() })
+    }
+  },
+})
+
+export const getActiveParticipants = query({
+  args: {
+    eventId: v.id('events'),
+  },
+  handler: async (ctx, args) => {
+    const fiveMinutesAgo = Date.now() - 5 * 60 * 1000
+    const activeParticipants = await ctx.db
+      .query('participants')
+      .withIndex('by_event_id', (q) => q.eq('eventId', args.eventId))
+      .filter((q) => q.gt(q.field('lastSeen'), fiveMinutesAgo))
+      .collect()
+
+    const activeParticipantsWithUserInfo = await Promise.all(
+      activeParticipants.map(async (p) => {
+        const user = await ctx.db.get(p.userId)
+        return {
+          ...p,
+          user,
+        }
+      }),
+    )
+
+    return activeParticipantsWithUserInfo.filter((p) => p.user !== null).filter(Boolean)
+  },
+})
+
 export const getParticipantsByEvent = query({
   args: {
     eventId: v.id('events'),

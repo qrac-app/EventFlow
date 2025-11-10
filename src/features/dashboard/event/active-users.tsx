@@ -1,9 +1,11 @@
 import { Users } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
+import { Id } from '~/convex/_generated/dataModel'
 
 interface ActiveUser {
-	id: string
+	id: Id<'users'>
 	name: string
+	avatar: string
 	lastSeen: string
 }
 
@@ -22,7 +24,6 @@ const colors = [
 ]
 
 export function ActiveUsers({ users, currentUserId }: ActiveUsersProps) {
-	// Filter out current user
 	const otherUsers = users.filter((u) => u.id !== currentUserId)
 
 	if (otherUsers.length === 0) return null

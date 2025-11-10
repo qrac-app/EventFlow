@@ -14,16 +14,14 @@ import { AddItemModal } from '@/features/dashboard/event/agenda/add-item-modal'
 import { EventHeader } from '@/features/dashboard/event/header'
 import { ParticipantsList } from '@/features/dashboard/event/participants-list'
 import { EventFormModal } from '@/features/dashboard/events/event-form-modal'
+
+import { usePresence } from '@/hooks/use-presence'
+
 import { toggleAgendaItem } from '@/stores/agenda-item'
 import type { AgendaItem } from '@/types'
+
 import { api } from '~/convex/_generated/api'
 import type { Id } from '~/convex/_generated/dataModel'
-
-interface ActiveUser {
-	id: string
-	name: string
-	lastSeen: string
-}
 
 export const Route = createFileRoute('/dashboard/events/$eventId')({
 	beforeLoad: async ({ params, context: { convexQueryClient } }) => {
@@ -66,7 +64,9 @@ function RouteComponent() {
 		api.participants.getCurrentUserAsParticipant,
 		isAuthenticated ? { eventId: eventId as Id<'events'> } : 'skip',
 	)
-	const activeUsers: ActiveUser[] = []
+	const activeParticipants = useQuery(api.participants.getActiveParticipants, {
+		eventId,
+	})
 
 	const reorderAgendaItems = useMutation(api.agendas.reorderAgendaItems)
 	const voteOnAgendaItem = useMutation(api.agendas.voteOnAgendaItem)
@@ -74,9 +74,19 @@ function RouteComponent() {
 	const updateAgendaItem = useMutation(api.agendas.updateAgendaItem)
 	const deleteAgendaItem = useMutation(api.agendas.deleteAgendaItem)
 
+	usePresence(eventId, participant?.userId)
+
 	if (currentEvent === undefined) {
 		return <LoadingSpinner />
 	}
+
+	const activeUsers =
+		activeParticipants?.map((p) => ({
+			id: p.user?._id as Id<'users'>,
+			name: p.user?.name || 'Unknown',
+			avatar: p.user?.avatar || '',
+			lastSeen: p.lastSeen ? new Date(p.lastSeen).toLocaleTimeString() : '',
+		})) || []
 
 	const handleAgendaReorder = async (orderedAgendaItem: AgendaItem[]) => {
 		const orderedAgendaItemIds = orderedAgendaItem.map(
@@ -139,7 +149,10 @@ function RouteComponent() {
 			<div className="max-w-7xl mx-auto px-6 pb-20">
 				{activeUsers.length > 0 && (
 					<div className="mb-6 flex justify-end">
-						<ActiveUsers users={activeUsers} currentUserId={''} />
+						<ActiveUsers
+							users={activeUsers}
+							currentUserId={participant?.userId}
+						/>
 					</div>
 				)}
 				<AgendaTimeline

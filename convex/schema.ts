@@ -36,6 +36,7 @@ export default defineSchema({
       v.literal('editor'),
       v.literal('viewer'),
     ),
+    lastSeen: v.optional(v.number()),
   })
     .index('by_event_id', ['eventId'])
     .index('by_user_id', ['userId'])
