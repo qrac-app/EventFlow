@@ -175,7 +175,10 @@ function RouteComponent() {
 				</Activity>
 			</div>
 
-			<AIDrawer eventId={eventId as Id<'events'>} />
+			<AIDrawer
+				eventId={eventId as Id<'events'>}
+				currentUserRole={participant?.role || ''}
+			/>
 			<AddItemModal onSave={handleSaveNewAgendaItem} />
 			<AddParticipantModal eventId={eventId as Id<'events'>} />
 			<EventFormModal />

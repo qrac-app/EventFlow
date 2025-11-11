@@ -10,7 +10,13 @@ import { aiDrawerStore, toggleAIDrawer } from '@/stores/ai-drawer'
 import { api } from '~/convex/_generated/api'
 import type { Id } from '~/convex/_generated/dataModel'
 
-export function AIDrawer({ eventId }: { eventId: Id<'events'> }) {
+export function AIDrawer({
+	eventId,
+	currentUserRole,
+}: {
+	eventId: Id<'events'>
+	currentUserRole: string
+}) {
 	const { isOpen } = useStore(aiDrawerStore)
 	const [input, setInput] = useState('')
 
@@ -94,6 +100,18 @@ export function AIDrawer({ eventId }: { eventId: Id<'events'> }) {
 						>
 							<X className="w-5 h-5" />
 						</motion.button>
+					</div>
+
+					<div className="flex-1 flex items-center justify-center p-6">
+						<div className="text-center">
+							<p className="text-lg font-semibold text-muted-foreground">
+								Access Restricted
+							</p>
+							<p className="text-sm text-muted-foreground mt-2">
+								You do not have permission to view messages or use the AI
+								assistant.
+							</p>
+						</div>
 					</div>
 
 					{/* Messages */}
@@ -201,13 +219,15 @@ export function AIDrawer({ eventId }: { eventId: Id<'events'> }) {
 								onKeyPress={(e) => e.key === 'Enter' && handleSend()}
 								placeholder="Describe what you need..."
 								className="flex-1 px-4 py-3 bg-background border border-border rounded focus:outline-none focus:ring-2 focus:ring-primary"
-								disabled={isGenerating}
+								disabled={isGenerating || currentUserRole === 'viewer'}
 							/>
 							<motion.button
 								whileHover={{ scale: 1.05 }}
 								whileTap={{ scale: 0.95 }}
 								onClick={handleSend}
-								disabled={!input.trim() || isGenerating}
+								disabled={
+									!input.trim() || isGenerating || currentUserRole === 'viewer'
+								}
 								className="px-6 py-3 bg-primary text-primary-foreground rounded disabled:opacity-50 disabled:cursor-not-allowed"
 							>
 								<Send className="w-5 h-5" />
