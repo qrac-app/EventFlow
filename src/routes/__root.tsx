@@ -6,6 +6,7 @@ import {
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { AnimatePresence } from 'motion/react'
+import { Activity } from 'react'
 
 import { DefaultCatchBoundary } from '@/components/DefaultCatchBoundary'
 import { NotFound } from '@/components/NotFound'
@@ -94,17 +95,21 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<AnimatePresence mode="wait">{children}</AnimatePresence>
 				<Toaster richColors position="top-right" />
 
-				<TanStackDevtools
-					config={{
-						position: 'bottom-right',
-					}}
-					plugins={[
-						{
-							name: 'Tanstack Router',
-							render: <TanStackRouterDevtoolsPanel />,
-						},
-					]}
-				/>
+				<Activity
+					mode={process.env.NODE_ENV === 'production' ? 'hidden' : 'visible'}
+				>
+					<TanStackDevtools
+						config={{
+							position: 'bottom-right',
+						}}
+						plugins={[
+							{
+								name: 'Tanstack Router',
+								render: <TanStackRouterDevtoolsPanel />,
+							},
+						]}
+					/>
+				</Activity>
 				<Scripts />
 			</body>
 		</html>
