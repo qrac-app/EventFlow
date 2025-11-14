@@ -10,7 +10,7 @@ The architecture is designed to be scalable, maintainable, and provide a seamles
 
 ### Core Technologies
 
-- **Frontend**: A single-page application (SPA) built with React and TypeScript.
+- **Frontend**: Built with TanStack Start, React.
 - **Backend**: Powered by [Convex](https://convex.dev/), a serverless platform that provides a real-time database, serverless functions (mutations, queries, actions), and authentication.
 - **Authentication**: Integrated with [Clerk](https://clerk.com/) for user management and authentication.
 - **AI**: Utilizes the Gemini API for generative AI features, such as event planning assistance.
